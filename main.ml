@@ -1,16 +1,21 @@
 open Mkanren.Mk
-open Core
+(* open Core *)
 
 let printf = Stdlib.Printf.printf
 
 let () = begin
   (* let f a = Mk.eqv a (Atom 2) in
     let l = Mk.call_fresh f Mk.empty_state in *)
-    let l = fives 5 empty_state in
-    let s = Sequence.hd l in
-      match s with
+    (* let l = fives 5 empty_state in *)
+    (* let s = Sequence.hd l in *)
+      (* match s with
       | Some x -> printf "\n%s\n" (state_to_string x)
-      | None -> printf "\n%s\n" "No state"
+      | None -> printf "\n%s\n" "No state" *)
+    let res = test_fives in
+      printf "\n%s\n" (pretty_print res)
+      (* match res with 
+      | Cons(a, _) -> printf "\n%s\n" (state_to_string a)
+      | _ -> printf "\n%s\n" "other" *)
 
   (* let l = test5 in  *)
   (* let s = Sequence.hd l in *)

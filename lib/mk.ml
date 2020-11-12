@@ -8,14 +8,13 @@ type var_counter = int
 type var = int
 
 type term = Var of var | Pair of var * term | Atom of int
+type 'a stream = Nil | Immature of (unit -> 'a stream) | Cons of 'a * ('a stream) 
 
 type substitution = (var, term, Int.comparator_witness) Map.t
 type state = substitution * var_counter
-type goal = state -> (state) Sequence.t
+type goal = state -> state stream
 
-type 'a stream = Nil | Immature of ('a stream) | Cons of 'a * ('a stream) 
-
-let mZero = Sequence.empty
+let mZero = Nil
 let empty_state = (Map.empty (module Int), 0)
 
 let rec walk t (s: substitution) = match t with
@@ -39,8 +38,8 @@ let rec unify u v =
     fun (s: substitution) -> 
         match walk u s, walk v s with
         | Var e1, Var e2 when e1 = e2 -> Some s
-        | Var e, z -> Some (ext_s (e, z) s)
-        | z, Var e -> Some (ext_s (e, z) s)
+        | Var(e), z -> Some (ext_s (e, z) s)
+        | z, Var(e) -> Some (ext_s (e, z) s)
         | Pair(x1, y1), Pair(x2, y2) -> begin 
             match unify (Var x1) (Var x2) s with
             | Some s2 -> unify y1 y2 s2
@@ -50,56 +49,77 @@ let rec unify u v =
         | _, _ -> None
 
 (* Goals *)
-let eqv u v = 
+let (===) u v = 
     fun sc ->
         match unify u v (fst sc) with
-        | Some sub -> Sequence.singleton (sub, snd sc)
+        | Some sub -> Immature (fun () -> Cons((sub, snd sc), mZero))
         | None -> mZero
 
 let call_fresh (f: term -> goal) =
     fun sc -> f (Var (snd sc)) (fst sc,(snd sc)+1)
 
-let call_empty_state g =
-    g empty_state 
+(* let rec fresh = *)
 
-(* get all results that match a certain predicate *)
-(* let take_all_pred p =  *)
+let call_empty_state g = g empty_state 
+
+
 
 (* Interleave results for complete search *)
+let rec mplus s1 s2 = match s1 with
+    | Nil -> s2
+    | Immature(f) -> Immature(fun () -> mplus s2 (f()))
+    | Cons(a, ss) -> Cons(a, mplus s2 ss)
+
 let disj g1 g2 =
-    fun sc -> let r1 = g1 sc in
-        let r2 = g2 sc in
-        Sequence.round_robin [r1; r2]
+    fun sc -> mplus (g1 sc) (g2 sc)
+
+let rec bind s g = match s with
+    | Nil -> mZero
+    | Immature(f) -> Immature(fun () -> bind (f()) g)
+    | Cons(a, ss) -> mplus (g a) (bind ss g)
 
 let conj g1 g2 =
-    fun sc -> 
-        let g1_states = g1 sc in 
-        if Sequence.is_empty g1_states then mZero else
-        Sequence.map g1_states ~f:(fun g1_state -> g2 g1_state)
+    fun sc -> bind (g1 sc) g2   
+
+let rec conj_plus gs = match List.hd gs, List.tl gs with
+    | Some(g), Some(t) -> conj (fun sc -> Immature(fun () -> g sc)) (conj_plus t)
+    | Some(g), _ -> fun sc -> Immature(fun () -> g sc)
+    | _, _ -> fun _ -> mZero
 
 
-(* inverse-n-delay *)
-let zzz g = fun sc -> g sc
-(* 
-let disj_plus goals = fun sc -> Sequence.round_robin (List.map ~f:(fun g -> g sc) goals)
-let conj_plus goals = fun sc ->  match Sequence.reduce goals ~f:conj with
-    | Some combined_goal -> combined_goal s
-    | None -> mZero  *)
+let rec disj_plus gs = match List.hd gs, List.tl gs with
+    | Some(g), Some(t) -> disj (fun sc -> Immature(fun () -> g sc)) (disj_plus t)
+    | Some(g), _ -> fun sc -> Immature(fun () -> g sc)
+    | _, _ -> fun _ -> mZero 
 
-(* let reify = fun sc ->  *)
+let state_to_string (sc: state) = match (Map.find (fst sc) 0) with
+    | Some (Atom s) -> Int.to_string s
+    | None -> "none"
+    | _ -> "nil"
+
+let rec pull s = match s with
+    | Immature(f) -> pull(f())
+    | _ -> s
+
+let rec take n s = match n, s with
+    | 0, _ -> mZero
+    | _, s -> match pull s with
+        | Cons(a, s) -> Cons(a, take (n - 1) s)
+        | _ -> mZero
+
+let rec take_all s = match pull s with
+    | Cons(a, s) -> Cons(a, take_all s)
+    | _ -> mZero
+
+let call_initial_state n g =
+    take n (pull (call_empty_state g))
+
+let rec pretty_print s = match s with
+    | Nil -> ""
+    | Immature(f) -> pretty_print (f())
+    | Cons(a, s) -> state_to_string a ^ "\n" ^ pretty_print s
 
 
-let state_to_string sc = Int.to_string (snd sc) 
 
-(* let f a = Mk.call_fresh (fun x -> eqv x (Mk.Atom "5")) in *)
-(* let rec fives x = disj (eqv x (Atom 5)) (fun sc -> fives x sc) *)
-let rec fives x = disj (eqv x (Atom 5)) (fun sc -> fun () -> fives x sc)
-let test_fives = call_fresh (fun x -> fives x)
-
-
-
-
-(* 
-    list comprehensions with monads
-
-*)
+let fives x = disj_plus [((===) x (Atom 13)); ((===) x (Atom 13))]
+let test_fives = call_fresh (fun y -> fives y) empty_state

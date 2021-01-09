@@ -11,8 +11,8 @@ let () = begin
       (* match s with
       | Some x -> printf "\n%s\n" (state_to_string x)
       | None -> printf "\n%s\n" "No state" *)
-    let res = test_fives in
-      printf "\n%s\n" (pretty_print res)
+    let res = test in
+      printf "\n%s\n" (stream_to_string res)
       (* match res with 
       | Cons(a, _) -> printf "\n%s\n" (state_to_string a)
       | _ -> printf "\n%s\n" "other" *)

@@ -1,0 +1,118 @@
+# dune exec ./run.exe
+# OCAMLPARAM: unset
+# Workspace root:
+# /Users/arsalanc-v2/Documents/NUSModules/CS2104/termproject/micro-kanren/test
+$ /usr/local/bin/nproc > /var/folders/p5/5dfc34qj5cx57_1946rmt8nm0000gn/T/dunea9aeca.output 2> /dev/null
+# Auto-detected concurrency: 8
+# disable binary cache
+$ /Users/arsalanc-v2/.opam/4.10.0/bin/ocamlc.opt -config > /var/folders/p5/5dfc34qj5cx57_1946rmt8nm0000gn/T/dune50c59a.output
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dyn
+#  ; merlin = true
+#  ; for_host = None
+#  ; fdo_target_exe = None
+#  ; build_dir = "default"
+#  ; toplevel_path =
+#      Some External "/Users/arsalanc-v2/.opam/4.10.0/lib/toplevel"
+#  ; ocaml_bin = External "/Users/arsalanc-v2/.opam/4.10.0/bin"
+#  ; ocaml = Ok External "/Users/arsalanc-v2/.opam/4.10.0/bin/ocaml"
+#  ; ocamlc = External "/Users/arsalanc-v2/.opam/4.10.0/bin/ocamlc.opt"
+#  ; ocamlopt = Ok External "/Users/arsalanc-v2/.opam/4.10.0/bin/ocamlopt.opt"
+#  ; ocamldep = Ok External "/Users/arsalanc-v2/.opam/4.10.0/bin/ocamldep.opt"
+#  ; ocamlmklib =
+#      Ok External "/Users/arsalanc-v2/.opam/4.10.0/bin/ocamlmklib.opt"
+#  ; env =
+#      map
+#        { "INSIDE_DUNE" :
+#            "/Users/arsalanc-v2/Documents/NUSModules/CS2104/termproject/micro-kanren/test/_build/default"
+#        ; "MANPATH" :
+#            "/Users/arsalanc-v2/Documents/NUSModules/CS2104/termproject/micro-kanren/test/_build/install/default/bin"
+#        ; "OCAMLFIND_IGNORE_DUPS_IN" :
+#            "/Users/arsalanc-v2/Documents/NUSModules/CS2104/termproject/micro-kanren/test/_build/install/default/lib"
+#        ; "OCAMLPATH" :
+#            "/Users/arsalanc-v2/Documents/NUSModules/CS2104/termproject/micro-kanren/test/_build/install/default/lib"
+#        ; "OCAMLTOP_INCLUDE_PATH" :
+#            "/Users/arsalanc-v2/Documents/NUSModules/CS2104/termproject/micro-kanren/test/_build/install/default/lib/toplevel"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
+#        }
+#  ; findlib_path = [ External "/Users/arsalanc-v2/.opam/4.10.0/lib" ]
+#  ; arch_sixtyfour = true
+#  ; natdynlink_supported = true
+#  ; supports_shared_libraries = true
+#  ; ocaml_config =
+#      { version = "4.10.0"
+#      ; standard_library_default = "/Users/arsalanc-v2/.opam/4.10.0/lib/ocaml"
+#      ; standard_library = "/Users/arsalanc-v2/.opam/4.10.0/lib/ocaml"
+#      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
+#      ; ccomp_type = "cc"
+#      ; c_compiler = "cc"
+#      ; ocamlc_cflags = [ "-O2"; "-fno-strict-aliasing"; "-fwrapv" ]
+#      ; ocamlc_cppflags = [ "-D_FILE_OFFSET_BITS=64"; "-D_REENTRANT" ]
+#      ; ocamlopt_cflags = [ "-O2"; "-fno-strict-aliasing"; "-fwrapv" ]
+#      ; ocamlopt_cppflags = [ "-D_FILE_OFFSET_BITS=64"; "-D_REENTRANT" ]
+#      ; bytecomp_c_compiler =
+#          [ "cc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-D_REENTRANT"
+#          ]
+#      ; bytecomp_c_libraries = [ "-lm"; "-lpthread" ]
+#      ; native_c_compiler =
+#          [ "cc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-D_REENTRANT"
+#          ]
+#      ; native_c_libraries = [ "-lm" ]
+#      ; cc_profile = []
+#      ; architecture = "amd64"
+#      ; model = "default"
+#      ; int_size = 63
+#      ; word_size = 64
+#      ; system = "macosx"
+#      ; asm = [ "clang"; "-arch"; "x86_64"; "-Wno-trigraphs"; "-c" ]
+#      ; asm_cfi_supported = true
+#      ; with_frame_pointers = false
+#      ; ext_exe = ""
+#      ; ext_obj = ".o"
+#      ; ext_asm = ".s"
+#      ; ext_lib = ".a"
+#      ; ext_dll = ".so"
+#      ; os_type = "Unix"
+#      ; default_executable_name = "a.out"
+#      ; systhread_supported = true
+#      ; host = "x86_64-apple-darwin19.4.0"
+#      ; target = "x86_64-apple-darwin19.4.0"
+#      ; profiling = false
+#      ; flambda = false
+#      ; spacetime = false
+#      ; safe_string = true
+#      ; exec_magic_number = "Caml1999X027"
+#      ; cmi_magic_number = "Caml1999I027"
+#      ; cmo_magic_number = "Caml1999O027"
+#      ; cma_magic_number = "Caml1999A027"
+#      ; cmx_magic_number = "Caml1999Y027"
+#      ; cmxa_magic_number = "Caml1999Z027"
+#      ; ast_impl_magic_number = "Caml1999M027"
+#      ; ast_intf_magic_number = "Caml1999N027"
+#      ; cmxs_magic_number = "Caml1999D027"
+#      ; cmt_magic_number = "Caml1999T027"
+#      ; natdynlink_supported = true
+#      ; supports_shared_libraries = true
+#      ; windows_unicode = false
+#      }
+#  }
+# Workspace root:
+# /Users/arsalanc-v2/Documents/NUSModules/CS2104/termproject/micro-kanren/test
+$ (cd _build/default && /Users/arsalanc-v2/.opam/4.10.0/bin/ocamldep.opt -modules -impl start.ml) > _build/default/.run.eobjs/start.ml.d
+$ (cd _build/default && /Users/arsalanc-v2/.opam/4.10.0/bin/ocamldep.opt -modules -impl run.ml) > _build/default/.run.eobjs/run.ml.d
+> File "run.ml", line 3, characters 14-14:
+> Error: Syntax error
+[2]

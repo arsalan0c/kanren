@@ -1,8 +1,13 @@
-open Core
+open Base
 
 exception Failure of string
 let[@inline] failwith msg = raise (Failure ("Failure: " ^ msg))
 
+(* 
+    It seems type declarations have to be duplicated from the .mli by default which isn't ideal,
+    although there are workarounds.
+    See https://discuss.ocaml.org/t/why-do-i-need-to-repeat-type-declarations-between-interfaces-and-implementations-or-how-do-i-get-around-this/3350/7
+*)
 type var_counter = int
 type var = int
 type term = Var of var | Pair of var * term | Atom of int
@@ -85,6 +90,7 @@ let rec conj_plus gs = match List.hd gs, List.tl gs with
     | Some(g), _ -> fun sc -> Immature(fun () -> g sc)
     | _, _ -> fun _ -> mZero
 
+
 (* Functions for convenience *)
 
 let rec pull s = match s with
@@ -148,12 +154,3 @@ let rec stream_to_string s = match s with
     | Nil -> ""
     | Immature(f) -> stream_to_string (f())
     | Cons(a, s) -> state_to_string a ^ "\n" ^ stream_to_string s
-
-let rec fives_or_sixes x = disj ((===) x (Atom 5)) (fun sc -> Immature (fun () -> fives_or_sixes x sc))
-let two_fives = take 2 (call_fresh (fun x -> fives x) empty_state)
-
-let one_five x = (once ((===) (Atom 5) (Atom 5))) empty_state
-
-let a_and_b = conj (call_fresh (fun x -> (===) x (Atom 7))) (call_fresh (fun x -> disj ((===) x (Atom 5)) ((===) x (Atom 6)))) empty_state
-
-let fivesix_or_seven x y =  ifte ((===) x (Atom 5)) ((===) y (Atom 6))  ((===) x (Atom 7))

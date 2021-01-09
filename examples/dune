@@ -1,3 +1,2 @@
-(executable
-    (name run)
-    (libraries mkanren core))
+(executable (name main)
+    (libraries mk base))

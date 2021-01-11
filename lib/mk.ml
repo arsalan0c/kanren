@@ -72,11 +72,6 @@ let rec mplus s1 s2 = match s1, s2 with
 let disj g1 g2 =
     fun sc -> mplus (g1 sc) (g2 sc)
 
-let rec disj_plus gs = match List.hd gs, List.tl gs with
-    | Some(g), Some(t) -> disj (fun sc -> Immature(fun () -> g sc)) (disj_plus t)
-    | Some(g), _ -> fun sc -> Immature(fun () -> g sc)
-    | _, _ -> fun _ -> mZero 
-
 let rec bind s g = match s with
     | Nil -> mZero
     | Immature(f) -> Immature(fun () -> bind (f()) g)
@@ -85,11 +80,18 @@ let rec bind s g = match s with
 let conj g1 g2 =
     fun sc -> bind (g1 sc) g2   
 
+(* Not a must but delay each goal so that if a user is only using disj_plus or conj_plus, they don't have to manually delay *)
+let rec disj_plus gs = match List.hd gs, List.tl gs with
+    | Some(g), Some(t) -> disj (fun sc -> Immature(fun () -> g sc)) (disj_plus t)
+    | Some(g), _ -> fun sc -> Immature(fun () -> g sc)
+    | _, _ -> fun _ -> mZero 
+
 let rec conj_plus gs = match List.hd gs, List.tl gs with
     | Some(g), Some(t) -> conj (fun sc -> Immature(fun () -> g sc)) (conj_plus t)
     | Some(g), _ -> fun sc -> Immature(fun () -> g sc)
     | _, _ -> fun _ -> mZero
 
+let conde gss = disj_plus (List.map gss ~f:conj_plus)
 
 (* Functions for convenience *)
 

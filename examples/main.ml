@@ -1,4 +1,4 @@
-open Mk
+open Mk.Mk
 
 let printf = Stdlib.Printf.printf
 
@@ -11,6 +11,17 @@ let a_and_b = conj (call_fresh (fun x -> (===) x (Atom 7))) (call_fresh (fun x -
 
 let fivesix_or_seven x y =  ifte ((===) x (Atom 5)) ((===) y (Atom 6))  ((===) x (Atom 7))
 
+(* if resulting stream has no states, the formula is unsatisfiable
+  otherwise, return one result after another
+*)
+let p = call_fresh (fun x -> disj ((===) x (Atom 1)) ((===) x (Atom 0)))
+let q = call_fresh (fun x -> disj ((===) x (Atom 1)) ((===) x (Atom 0)))
+let r = call_fresh (fun x -> disj ((===) x (Atom 1)) ((===) x (Atom 0)))
+
+let formula = (===) (conj_plus [(disj p q); r]) (Atom 1)
+
+let g = call_empty_state formula
+
 
 let () = begin
   (* let f a = Mk.eqv a (Atom 2) in
@@ -20,8 +31,8 @@ let () = begin
       (* match s with
       | Some x -> printf "\n%s\n" (state_to_string x)
       | None -> printf "\n%s\n" "No state" *)
-    let res = two_fives in
-      printf "\n%s\n" (stream_to_string res)
+   
+    printf "\n%s\n" (stream_to_string g)
       (* match res with 
       | Cons(a, _) -> printf "\n%s\n" (state_to_string a)
       | _ -> printf "\n%s\n" "other" *)

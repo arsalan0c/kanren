@@ -8,9 +8,10 @@ let[@inline] failwith msg = raise (Failure ("Failure: " ^ msg))
     although there are workarounds.
     See https://discuss.ocaml.org/t/why-do-i-need-to-repeat-type-declarations-between-interfaces-and-implementations-or-how-do-i-get-around-this/3350/7
 *)
+type atom = Int of int | Float of float | Bool of bool | String of string 
 type var_counter = int
 type var = int
-type term = Var of var | Pair of var * term | Atom of int
+type term = Var of var | Pair of var * term | Atom of atom
 type 'a stream = Nil | Immature of (unit -> 'a stream) | Cons of 'a * ('a stream)
 
 type substitution = (var, term, Int.comparator_witness) Map.t
@@ -19,6 +20,8 @@ type goal = state -> state stream
 
 let mZero = Nil
 let empty_state = (Map.empty (module Int), 0)
+
+let eqv (u: atom) (v: atom) = (u = v)
 
 let rec walk t (s: substitution) = match t with
     | Var v -> begin
@@ -46,9 +49,8 @@ let rec unify u v s =
         | Some s2 -> unify y1 y2 s2
         | None -> None
         end
-    | Atom e1, Atom e2 when e1 = e2 -> Some s
+    | Atom e1, Atom e2 when (eqv e1 e2) -> Some s
     | _, _ -> None
-
 
 (* Goals *)
 

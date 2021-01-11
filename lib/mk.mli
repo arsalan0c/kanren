@@ -2,9 +2,10 @@ open Base
 
 exception Failure of string
 
+type atom = Int of in | Bool of bool | String of string
 type var_counter = int
 type var = int
-type term = Var of var | Pair of var * term | Atom of int
+type term = Var of var | Pair of var * term | Atom of atom
 type 'a stream = Nil | Immature of (unit -> 'a stream) | Cons of 'a * ('a stream)
 
 type substitution = (var, term, Int.comparator_witness) Map.t

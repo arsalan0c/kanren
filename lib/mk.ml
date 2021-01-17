@@ -8,20 +8,19 @@ let[@inline] failwith msg = raise (Failure ("Failure: " ^ msg))
     although there are workarounds.
     See https://discuss.ocaml.org/t/why-do-i-need-to-repeat-type-declarations-between-interfaces-and-implementations-or-how-do-i-get-around-this/3350/7
 *)
-type atom = Int of int | Float of float | Bool of bool | String of string 
-type var_counter = int
+
 type var = int
+type var_counter = int
+type atom = Int of int | Float of float | Bool of bool | String of string 
 type term = Var of var | Pair of var * term | Atom of atom
 type 'a stream = Nil | Immature of (unit -> 'a stream) | Cons of 'a * ('a stream)
 
-type substitution = (var, term, Int.comparator_witness) Map.t
+type substitution = (int, term, Int.comparator_witness) Map.t 
 type state = substitution * var_counter
 type goal = state -> state stream
 
 let mZero = Nil
 let empty_state = (Map.empty (module Int), 0)
-
-let eqv (u: atom) (v: atom) = (u = v)
 
 let rec walk t (s: substitution) = match t with
     | Var v -> begin
@@ -43,7 +42,7 @@ let ext_s v t s = if occurs v t s
 
 let rec unify u v s = 
     match walk u s, walk v s with
-    | Var e1, Var e2 when e1 = e2 -> Some s
+    | Var(e1), Var(e2) when e1 = e2 -> Some s
     | Var(e), z -> Some (ext_s e z s)
     | z, Var(e) -> Some (ext_s e z s)
     | Pair(x1, y1), Pair(x2, y2) -> begin 
@@ -51,7 +50,6 @@ let rec unify u v s =
         | Some s2 -> unify y1 y2 s2
         | None -> None
         end
-    | Atom(e1), Atom(e2) when (eqv e1 e2) -> Some s
     | _, _ -> None
 
 
@@ -141,11 +139,18 @@ let call_initial_state n g =
 
 (* Functions for converting to string *)
 
+let atom_str a =
+    match a with
+    | Int(x) -> Int.to_string x
+    | Float(x) -> Float.to_string x
+    | Bool(x) -> Bool.to_string x
+    | String(x) -> x
+
 let rec term_str t = 
     match t with
     | Var(x) -> Int.to_string x
     | Pair(x, y) -> "(" ^ (Int.to_string x) ^ ", " ^ (term_str y) ^ ")"
-    | Atom(x) -> Int.to_string x
+    | Atom(x) -> atom_str x
 
 let subst_str subst =
     "[" ^ (Map.fold subst ~init:"" ~f:(fun ~key:k ~data:v acc -> 

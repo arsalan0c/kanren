@@ -1,11 +1,11 @@
-open Mk.Mk
+open Mk
 
 let printf = Stdlib.Printf.printf
 
 let rec fives_or_sixes x = disj ((===) x (Atom 5)) (fun sc -> Immature (fun () -> fives_or_sixes x sc))
 let two_fives = take 2 (call_fresh (fun x -> fives x) empty_state)
 
-let one_five x = (once ((===) (Atom 5) (Atom 5))) empty_state
+let one_five x = (once ((===) (Atom (Int 5)) (Atom 5))) empty_state
 
 let a_and_b = conj (call_fresh (fun x -> (===) x (Atom 7))) (call_fresh (fun x -> disj ((===) x (Atom 5)) ((===) x (Atom 6)))) empty_state
 

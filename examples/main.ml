@@ -1,4 +1,6 @@
-open Mk
+open Mk.Micro
+open Mk.Mini
+open Mk.Print
 
 let printf = Stdlib.Printf.printf
 
@@ -6,55 +8,39 @@ let rec fives x = disj ((===) x (Atom (Int 5))) (fun sc -> Immature (fun () -> f
 let three_fives = take 3 (call_fresh (fun x -> fives x) empty_state)
 
 let one_five = (once ((===) (Atom (Int 6)) (Atom (Int 5)))) empty_state
-
-let a_and_b = conj (call_fresh (fun x -> (===) x (Atom (Int 7)))) (call_fresh (fun x -> disj ((===) x (Atom (Int 5))) ((===) x (Atom (Int 6))))) empty_state
-
 let fivesix_or_seven x y = ifte ((===) x (Atom (Int 5))) ((===) y (Atom (Int 6))) ((===) x (Atom (Int 7)))
-let els x = ifte ((===) (Atom (Int 5)) (Atom (Int 6))) ((===) x (Atom (Int 6))) ((===) x (Atom (Int 7)))
 
-
-(* if resulting stream has no states, the formula is unsatisfiable
-  otherwise, return one result after another
+(* 
+  if resulting stream has no states, the formula is unsatisfiable
 *)
-let p = call_fresh (fun x -> conj ((===) x (Atom (Int 1))) ((===) x (Atom (Int 0))))
-let q = call_fresh (fun x -> disj ((===) x (Atom (Int 1))) ((===) x (Atom (Int 0))))
-let r = call_fresh (fun x -> disj ((===) x (Atom (Int 1))) ((===) x (Atom (Int 0))))
 
-let f1 = disj_plus [p; q]
-let f2 = conj p q
-let f3 = disj_plus [(call_fresh (fun x -> fives x)); q; r]
+let sat = 
+  (* helper function to unify a variable with a boolean *)
+  let boolean x b = ((===) x (Atom (Bool b))) in  
 
-(* (===) (Atom (Int 1)) (Atom (Int 1)) *)
-(* (conj_plus [(disj p q); r]) *)
+  (* map each variable to a choice of true or false boolean *) 
+  let choices vars = List.map (fun x -> (disj (boolean x true) (boolean x false))) vars in 
+  
+  (* helper function to unify the ith variable in a list with a boolean *)
+  let boolean_l i lst b = boolean (List.nth lst i) b in
 
-let g = call_empty_state f1
-let g2 = call_empty_state (call_fresh (fun x -> call_fresh (fun y -> fivesix_or_seven x y)))
-let g3 = call_empty_state (call_fresh (fun x -> els x))
+  (* define the clauses of the formula *)
+  let disjunctions vars = [
+    disj_plus [boolean_l 0 vars true; boolean_l 1 vars false; boolean_l 2 vars true]; (* P \/ !Q \/ R*) 
+    disj_plus [boolean_l 0 vars false; boolean_l 1 vars true; boolean_l 3 vars true]; (* !P \/ Q \/ S *)
+    disj_plus [boolean_l 1 vars true; boolean_l 3 vars false]; (* Q \/ !S *)
+    disj_plus [boolean_l 2 vars true; boolean_l 3 vars true]; (* R \/ S *)
+    disj_plus [boolean_l 0 vars true; boolean_l 2 vars false]; (* P \/ !R *)
+  ] in
 
-let g4 = call_empty_state (fresh3 (fun (x, y, z) -> disj_plus [((===) x (Atom (Str "first"))); ((===) y (Atom (Str "sec"))); ((===) z (Atom (Str "third")))]))
+  (* form the formula in CNF form by taking the conjunction of the disjunctions of the choices and disjunctions *)
+  let formula vars = conj_plus ((choices vars)@(disjunctions vars)) in
 
-let at i lst = List.nth lst i 
-let g5 = call_empty_state (freshN 3 (fun vars -> conj_plus [((===) (at 0 vars) (Atom (Int 1))); ((===) (at 1 vars) (Atom (Int 2))); ((===) (at 2 vars) (Atom (Int 3)))]))
+  (* form the goal by introducing the 4 logic variables used in the formula *)
+  let g = freshN 4 formula in
 
+  (* obtain the result stream by calling the goal in the empty state *)
+  let s = call_empty_state g in
 
-
-let () = begin
-  (* let f a = Mk.eqv a (Atom 2) in
-    let l = Mk.call_fresh f Mk.empty_state in *)
-    (* let l = fives 5 empty_state in *)
-    (* let s = Sequence.hd l in *)
-      (* match s with
-      | Some x -> printf "\n%s\n" (state_to_string x)
-      | None -> printf "\n%s\n" "No state" *)
-   
-    printf "\n%s\n" (stream_str g3)
-      (* match res with 
-      | Cons(a, _) -> printf "\n%s\n" (state_to_string a)
-      | _ -> printf "\n%s\n" "other" *)
-
-  (* let l = test5 in  *)
-  (* let s = Sequence.hd l in *)
-  (* let r = stream_to_string l in *)
-  (* printf "\n%s\n" r  *)
-
-end
+  (* pretty print the stream *)
+  printf "%s" (stream_print s)

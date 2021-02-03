@@ -3,8 +3,6 @@ open Base
 exception Failure of string
 let[@inline] failwith msg = raise (Failure ("Failure: " ^ msg))
 
-let printf = Stdlib.Printf.printf
-
 type var = int
 type var_counter = int
 type 'a stream = Nil | Immature of (unit -> 'a stream) | Cons of 'a * ('a stream)

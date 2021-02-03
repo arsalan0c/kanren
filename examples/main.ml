@@ -9,11 +9,13 @@ let printf = Stdlib.Printf.printf
 let rec fives x = disj ((===) x (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
 
 let three_fives = 
-  (* form the goal by introducing a new logic variable *)
-  let g = (call_fresh (fun x -> fives x)) in
+  (* obtain the conjunction of fives applied with three variables *)
+  let thrice = fun (x,y,z) -> conj_plus [fives x; fives y; fives z] in
+  (* form the goal by introducing 3 new logic variables *)
+  let g = fresh3 thrice in
   (* obtain the result stream by calling the goal in the empty state *)
   let s = call_empty_state g in
-  (* obtain 3 results from the stream *)
+  (* obtain 3 states from the stream *)
   let s3 = take 3 s in 
   printf "%s" (stream_print s3)
 

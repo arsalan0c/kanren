@@ -1,3 +1,5 @@
+(* additions from miniKanren and elsewhere *)
+
 open Base
 open Micro
 

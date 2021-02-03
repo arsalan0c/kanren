@@ -1,3 +1,5 @@
+(* μKanren implementation *)
+
 open Base
 
 exception Failure of string

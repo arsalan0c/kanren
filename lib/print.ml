@@ -1,7 +1,7 @@
+(* conversions to string *)
+
 open Base
 open Micro
-
-(* Functions for converting to string *)
 
 let atom_print a =
   match a with

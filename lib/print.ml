@@ -33,5 +33,5 @@ let rec stream_print_h s =
   | Cons(a, r) -> state_print a ^ "\n" ^ stream_print_h r
 
 let stream_print s = 
-  "\nStates:\n" ^ (stream_print_h s) ^ "\n"
+  "States:\n" ^ (stream_print_h s) ^ "\n"
   

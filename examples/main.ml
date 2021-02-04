@@ -17,12 +17,12 @@ let three_fives =
   let s = call_empty_state g in
   (* obtain 3 states from the stream *)
   let s3 = take 3 s in 
-  printf "%s" (stream_print s3)
+  printf "three_fives\n%s" (stream_print s3)
 
 let one_five = 
   (* use the committed choice operator to obtain just the first result from the stream *)
   let s = once (call_fresh (fun x -> fives x)) empty_state in
-  printf "%s" (stream_print s)
+  printf "one_five\n%s" (stream_print s)
 
 let fivesix_or_seven = 
     (* use the soft-cut operator to either unify two variables with 5 and 6 or just the first with 7 *)
@@ -32,7 +32,7 @@ let fivesix_or_seven =
     (* obtain the result stream by calling the goal in the empty state *)
     let s = call_empty_state g in
     (* pretty print the stream *)
-    printf "%s" (stream_print s)
+    printf "fivesix_or_seven\n%s" (stream_print s)
 
 (* Solve the formula: (P \/ !Q \/ R) /\ (!P \/ Q \/ S) /\ (Q \/ !S) /\ (R \/ S) && (P \/ !R) *)
 let sat = 
@@ -59,4 +59,4 @@ let sat =
   (* obtain the result stream by calling the goal in the empty state *)
   let s = call_empty_state g in
   (* pretty print the stream *)
-  printf "%s" (stream_print s)
+  printf "sat\n%s" (stream_print s)

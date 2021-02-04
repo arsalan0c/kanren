@@ -1,7 +1,6 @@
 # µKanren in OCaml
  
-[µKanren](http://webyrd.net/scheme-2013/papers/HemannMuKanren2013.pdf) is an embedded DSL for logic programming. It is part of family of such languages known as [*kanrens*](http://minikanren.org), with a focus on being minimalist and easy to understand. While this is at the expense of expressiveness and ease of use, the core system can be augmented with additional operators, built on top of the primitives. This implementation includes several such suggestions from the paper, complete search and *take* for example. It also includes some others such as *once* for commited choice and *ifte* as a soft-cut.
-
+[µKanren](http://webyrd.net/scheme-2013/papers/HemannMuKanren2013.pdf) is an embedded DSL for logic programming. It is part of family of such languages known as [*kanrens*](http://minikanren.org), with a focus on being minimalist and easy to understand. While this is at the expense of expressiveness and ease of use, the core system can be augmented. This implementation includes several such suggestions from the paper, including complete search through fair interleaving and the `take` operator for example. It also includes other functionality such as `once` for commited choice and `ifte` which functions as a [soft-cut](https://www.swi-prolog.org/pldoc/doc_for?object=(*-%3E)/2).
 
 ## Examples
 
@@ -18,9 +17,9 @@ A recursive goal to provide an infinite number of 5's:
 ```OCaml
 let rec fives x = disj ((===) x (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
 ```
-To preventation invocation of the recursive goal leading to stack overflow, an immature stream is used to introduce delay.
+The recursive goal is wrapped in a nullary function and designated as an *immature* stream. The new goal is then formed as a unary function which takes in a state and returns the stream. Despite OCaml being call-by-value, this ensures the recursive goal is not evaluated when passed as an argument to `disj` (which would lead to stack overflow).
 
-Obtaining three states, each with three 5's, from the infinite stream of 5's:
+Here's an example obtaining three states, each with three 5's, from the infinite stream of 5's:
 
 ```OCaml
 let three_fives = 
@@ -92,7 +91,7 @@ let sat =
     disj_plus [boolean_l 0 vars true; boolean_l 2 vars false]; (* P \/ !R *)
   ] in
 
-  (* form the formula in CNF form by taking the conjunction of the disjunctions of the choices and disjunctions *)
+  (* form the formula in CNF form by taking the conjunction of the disjunctions *)
   let formula vars = conj_plus ((choices vars)@(disjunctions vars)) in
   (* form the goal by introducing the 4 logic variables used in the goal *)
   let g = freshN 4 formula in

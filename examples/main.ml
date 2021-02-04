@@ -52,7 +52,7 @@ let sat =
     disj_plus [boolean_l 0 vars true; boolean_l 2 vars false]; (* P \/ !R *)
   ] in
 
-  (* form the formula in CNF form by taking the conjunction of the disjunctions of the choices and disjunctions *)
+  (* form the formula in CNF form by taking the conjunction of the disjunctions *)
   let formula vars = conj_plus ((choices vars)@(disjunctions vars)) in
   (* form the goal by introducing the 4 logic variables used in the goal *)
   let g = freshN 4 formula in

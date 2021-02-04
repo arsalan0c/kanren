@@ -34,11 +34,11 @@ let fivesix_or_seven =
     (* pretty print the stream *)
     printf "%s" (stream_print s)
 
-(* Solve the formula: (P \/ !Q \/ R) && (!P \/ Q \/ S) && (Q \/ !S) && (R \/ S) && (P \/ !R) *)
+(* Solve the formula: (P \/ !Q \/ R) /\ (!P \/ Q \/ S) /\ (Q \/ !S) /\ (R \/ S) && (P \/ !R) *)
 let sat = 
   (* helper function to unify a variable with a boolean *)
   let boolean x b = ((===) x (Atom (Bool b))) in  
-  (* map each variable to a choice of true or false boolean *) 
+  (* map each variable to a choice of true or false *) 
   let choices vars = List.map (fun x -> (disj (boolean x true) (boolean x false))) vars in 
   
   (* helper function to unify the ith variable in a list with a boolean *)

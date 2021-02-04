@@ -73,7 +73,8 @@ let (===) u v =
 
 let call_fresh (f: term -> goal) =
     fun sc -> f (Var (snd sc)) (fst sc,(snd sc)+1)
-        
+
+(* fair interleaving: order of the streams is switched in order to hand off control to the other stream *)
 let rec mplus s1 s2 = match s1, s2 with
     | Nil, _ -> s2
     | Immature f1, Immature f2 -> Immature(fun () -> mplus (f1()) (f2()))

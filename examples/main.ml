@@ -25,12 +25,13 @@ let one_five =
   printf "%s" (stream_print s)
 
 let fivesix_or_seven = 
-    (* use the soft-cut operator to unify two variables with 5 and 6 or just the first with 7 *)
+    (* use the soft-cut operator to either unify two variables with 5 and 6 or just the first with 7 *)
     let cond = fun (x, y) -> ifte ((===) x (Atom (Int 5))) ((===) y (Atom (Int 6))) ((===) x (Atom (Int 7))) in
     (* form the goal by introducing the 2 logic variables used in the goal *)
     let g = fresh2 cond in
     (* obtain the result stream by calling the goal in the empty state *)
     let s = call_empty_state g in
+    (* pretty print the stream *)
     printf "%s" (stream_print s)
 
 (* Solve the formula: (P \/ !Q \/ R) && (!P \/ Q \/ S) && (Q \/ !S) && (R \/ S) && (P \/ !R) *)

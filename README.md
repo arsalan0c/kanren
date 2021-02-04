@@ -6,6 +6,7 @@
 ## Examples
 
 The examples can be run with 
+
 ```
 dune exec examples/main.exe
 ```
@@ -13,12 +14,14 @@ dune exec examples/main.exe
 ### Fives
 
 A recursive goal to provide an infinite number of 5's:
+
 ```OCaml
 let rec fives x = disj ((===) x (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
 ```
 To prevent a stack overflow, invocation of the recursive goal is delayed by using an immature stream.
 
 Obtaining three states, each with three 5's, from the infinite stream of 5's:
+
 ```OCaml
 let three_fives = 
   (* obtain the conjunction of fives applied with three variables *)
@@ -34,6 +37,7 @@ let three_fives =
 ```
 
 This gives the following result where each line corresponds to a state which maps variables, represented by naturals, to their values:
+
 ```
 States:
 { substitution: [(0, 5),  (1, 5),  (2, 5),  ], counter: 3 }
@@ -45,6 +49,7 @@ States:
 `ifte` corresponds to an if-then-else construct. It takes in 3 goals and if the first succeeds (at least one resulting state), results of the conjunction of the first and second goals is returned. Otherwise, the result of the third goal is returned.
 
 Unifying two variables with 5 and 6 or just the first with 7: 
+
 ```OCaml
 let fivesix_or_seven = 
     let cond = fun (x, y) -> ifte ((===) x (Atom (Int 5))) ((===) y (Atom (Int 6))) ((===) x (Atom (Int 7))) in
@@ -57,6 +62,7 @@ let fivesix_or_seven =
 ```
 
 Since the first goal succeeds, the result is a single state with two variables having the values 5 and 6:
+
 ```
 States:
 { substitution: [(0, 5),  (1, 6),  ], counter: 2 }
@@ -66,7 +72,8 @@ This can be useful in committing to a heuristic but only after testing to see wh
 
 ### A SAT problem
 
-Solving the formula `(P \/ !Q \/ R) /\ (!P \/ Q \/ S) /\ (Q \/ !S) /\ (R \/ S) && (P \/ !R)`:
+Solving the formula `(P \/ !Q \/ R) /\ (!P \/ Q \/ S) /\ (Q \/ !S) /\ (R \/ S) /\ (P \/ !R)`:
+
 ```OCaml
 let sat = 
   (* helper function to unify a variable with a boolean *)

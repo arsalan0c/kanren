@@ -34,7 +34,7 @@ let fivesix_or_seven =
     (* pretty print the stream *)
     printf "fivesix_or_seven\n%s" (stream_print s)
 
-(* Solve the formula: (P \/ !Q \/ R) /\ (!P \/ Q \/ S) /\ (Q \/ !S) /\ (R \/ S) /\ (P \/ !R) *)
+(* Solve the formula: (P \/ !Q \/ R) /\ (!P \/ Q \/ S) /\ (Q \/ !S) /\ (R \/ S) && (P \/ !R) *)
 let sat = 
   (* helper function to unify a variable with a boolean *)
   let boolean x b = ((===) x (Atom (Bool b))) in  

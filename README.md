@@ -66,7 +66,11 @@ This can be useful in committing to a heuristic but only after testing to see wh
 
 ### A SAT problem
 
+<<<<<<< HEAD
 Solving the formula `(P \/ !Q \/ R) && (!P \/ Q \/ S) && (Q \/ !S) && (R \/ S) && (P \/ !R)`:
+=======
+Solving the formula `(P \/ !Q \/ R) /\ (!P \/ Q \/ S) /\ (Q \/ !S) /\ (R \/ S) && (P \/ !R)`:
+>>>>>>> main
 ```OCaml
 let sat = 
   (* helper function to unify a variable with a boolean *)

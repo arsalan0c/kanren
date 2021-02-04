@@ -1,6 +1,6 @@
 # µKanren in OCaml
  
-[µKanren](http://webyrd.net/scheme-2013/papers/HemannMuKanren2013.pdf) is an embedded domain specific language for relational programming. It is part of family of such languages known as [*kanrens*](http://minikanren.org), with a focus on being minimalist and easy to understand. While this is at the expense of expressiveness and ease of use, the core system can be augmented with additional operators, built on top of the primitives. This implementation includes several such suggestions from the paper, complete search and *take* for example. It also includes some others such as *once* for commited choice and *ifte* as a soft-cut.
+[µKanren](http://webyrd.net/scheme-2013/papers/HemannMuKanren2013.pdf) is an embedded DSL for logic programming. It is part of family of such languages known as [*kanrens*](http://minikanren.org), with a focus on being minimalist and easy to understand. While this is at the expense of expressiveness and ease of use, the core system can be augmented with additional operators, built on top of the primitives. This implementation includes several such suggestions from the paper, complete search and *take* for example. It also includes some others such as *once* for commited choice and *ifte* as a soft-cut.
 
 
 ## Examples
@@ -56,7 +56,7 @@ let fivesix_or_seven =
     printf "%s" (stream_print s)
 ```
 
-Since the first goal succeeds, the result is a single state with two variables hvaing the value 5 and 6:
+Since the first goal succeeds, the result is a single state with two variables having the values 5 and 6:
 ```
 States:
 { substitution: [(0, 5),  (1, 6),  ], counter: 2 }
@@ -95,10 +95,6 @@ let sat =
   printf "%s" (stream_print s)
 ```
 
-
-## Types
-
-
 ## See Also
 - *The Reasoned Schemer* by Daniel Friedman, William Byrd, Oleg Kiselyov and Jason Hemann
 - [A Framework for Extending microKanren with constraints](https://arxiv.org/pdf/1701.00633.pdf)
@@ -107,3 +103,5 @@ let sat =
 - https://aphyr.com/posts/354-unifying-the-technical-interview
 - [Differences between miniKanren and Prolog](http://minikanren.org/minikanren-and-prolog.html)
 - [Backtracking, interleaving, and terminating monad transformers](https://dl.acm.org/doi/10.1145/1086365.1086390)
+- [miniKanren: an interactive tutorial](http://io.livecode.ch/learn/webyrd/webmk)
+- [A Unified Approach to Solving Seven Programming Problems](http://io.livecode.ch/learn/gregr/icfp2017-artifact-auas7pp)

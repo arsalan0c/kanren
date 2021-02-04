@@ -18,7 +18,7 @@ A recursive goal to provide an infinite number of 5's:
 ```OCaml
 let rec fives x = disj ((===) x (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
 ```
-To prevent a stack overflow, invocation of the recursive goal is delayed by using an immature stream.
+To preventation invocation of the recursive goal leading to stack overflow, an immature stream is used to introduce delay.
 
 Obtaining three states, each with three 5's, from the infinite stream of 5's:
 

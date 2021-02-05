@@ -15,7 +15,7 @@ dune exec examples/main.exe
 A recursive goal to provide an infinite number of 5's:
 
 ```OCaml
-let rec fives x = disj ((===) x (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
+let rec fives x = disj (x === (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
 ```
 The recursive goal is wrapped in a nullary function and designated as an *immature* stream. The new goal is then formed as a unary function which takes in a state and returns the stream. Despite OCaml being call-by-value, this ensures the recursive goal is not evaluated when passed as an argument to `disj` (which would lead to stack overflow).
 
@@ -51,7 +51,7 @@ Unifying two variables with 5 and 6 or just the first with 7:
 
 ```OCaml
 let fivesix_or_seven = 
-    let cond = fun (x, y) -> ifte ((===) x (Atom (Int 5))) ((===) y (Atom (Int 6))) ((===) x (Atom (Int 7))) in
+    let cond = fun (x, y) -> ifte (x === (Atom (Int 5))) (y === (Atom (Int 6))) (x === (Atom (Int 7))) in
     (* form the goal by introducing the 2 logic variables used in the goal *)
     let g = fresh2 cond in
     (* obtain the result stream by calling the goal in the empty state *)
@@ -76,7 +76,7 @@ Solving the formula `(P \/ !Q \/ R) /\ (!P \/ Q \/ S) /\ (Q \/ !S) /\ (R \/ S) /
 ```OCaml
 let sat = 
   (* helper function to unify a variable with a boolean *)
-  let boolean x b = ((===) x (Atom (Bool b))) in  
+  let boolean x b = (x === (Atom (Bool b))) in  
   (* map each variable to a choice of true or false boolean *) 
   let choices vars = List.map (fun x -> (disj (boolean x true) (boolean x false))) vars in 
   

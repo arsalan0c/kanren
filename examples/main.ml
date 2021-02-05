@@ -6,7 +6,7 @@ let printf = Stdlib.Printf.printf
 
 (* A recursive goal to provide an infinite number of 5's *)
 (* To prevent a stack overflow, invocation of the recursive goal is delayed by using an immature stream *)
-let rec fives x = disj ((===) x (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
+let rec fives x = disj (x === (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
 
 let three_fives = 
   (* obtain the conjunction of fives applied with three variables *)
@@ -26,7 +26,7 @@ let one_five =
 
 let fivesix_or_seven = 
     (* use the soft-cut operator to either unify two variables with 5 and 6 or just the first with 7 *)
-    let cond = fun (x, y) -> ifte ((===) x (Atom (Int 5))) ((===) y (Atom (Int 6))) ((===) x (Atom (Int 7))) in
+    let cond = fun (x, y) -> ifte (x === (Atom (Int 5))) (y === (Atom (Int 6))) (x === (Atom (Int 7))) in
     (* form the goal by introducing the 2 logic variables used in the goal *)
     let g = fresh2 cond in
     (* obtain the result stream by calling the goal in the empty state *)
@@ -37,7 +37,7 @@ let fivesix_or_seven =
 (* Solve the formula: (P \/ !Q \/ R) /\ (!P \/ Q \/ S) /\ (Q \/ !S) /\ (R \/ S) /\ (P \/ !R) *)
 let sat = 
   (* helper function to unify a variable with a boolean *)
-  let boolean x b = ((===) x (Atom (Bool b))) in  
+  let boolean x b = (x === (Atom (Bool b))) in  
   (* map each variable to a choice of true or false *) 
   let choices vars = List.map (fun x -> (disj (boolean x true) (boolean x false))) vars in 
   

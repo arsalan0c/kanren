@@ -4,25 +4,26 @@ open Mk.Print
 
 let printf = Stdlib.Printf.printf
 
-(* A recursive goal to provide an infinite number of 5's *)
+(* A recursive goal to provide an infinite number of turtle's *)
 (* To prevent a stack overflow, invocation of the recursive goal is delayed by using an immature stream *)
-let rec fives x = disj (x === (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
+let rec turtles x = disj (x === (Atom (Str "turtle"))) (fun sc -> Immature (fun () -> turtles x sc))
 
-let three_fives = 
-  (* obtain the conjunction of fives applied with three variables *)
-  let thrice = fun (x,y,z) -> conj_plus [fives x; fives y; fives z] in
+let three_turtles = 
+  (* obtain the conjunction of turtles applied with three variables *)
+  let thrice = fun (x,y,z) -> conj_plus [turtles x; turtles y; turtles z] in
   (* form the goal by introducing 3 new logic variables *)
   let g = fresh3 thrice in
   (* obtain the result stream by calling the goal in the empty state *)
   let s = call_empty_state g in
   (* obtain 3 states from the stream *)
-  let s3 = take 3 s in 
-  printf "three_fives\n%s" (stream_print s3)
+  let s3 = take 3 s in
+  (* pretty print the stream *)
+  printf "three_turtles\n%s" (stream_print s3)
 
-let one_five = 
+let one_turtle = 
   (* use the committed choice operator to obtain just the first result from the stream *)
-  let s = once (call_fresh (fun x -> fives x)) empty_state in
-  printf "one_five\n%s" (stream_print s)
+  let s = once (call_fresh (fun x -> turtles x)) empty_state in
+  printf "one_turtle\n%s" (stream_print s)
 
 let fivesix_or_seven = 
     (* use the soft-cut operator to either unify two variables with 5 and 6 or just the first with 7 *)

@@ -10,38 +10,38 @@ The examples can be run with
 dune exec examples/main.exe
 ```
 
-### Fives
+### Turtles
 
-A recursive goal to provide an infinite number of 5's:
+A recursive goal to provide an infinite number of turtles:
 
 ```OCaml
-let rec fives x = disj (x === (Atom (Int 5))) (fun sc -> Immature (fun () -> fives x sc))
+let rec turtles x = disj (x === (Atom (Str "turtle"))) (fun sc -> Immature (fun () -> turtles x sc))
 ```
 The recursive goal is wrapped in a nullary function and designated as an *immature* stream. The new goal is then formed as a unary function which takes in a state and returns the stream. Despite OCaml being call-by-value, this ensures the recursive goal is not evaluated when passed as an argument to `disj` (which would lead to stack overflow).
 
-Here's an example obtaining three states, each with three 5's, from the infinite stream of 5's:
+Here's an example obtaining three states, each with three turtles, from the infinite stream of turtles:
 
 ```OCaml
-let three_fives = 
-  (* obtain the conjunction of fives applied with three variables *)
-  let thrice = fun (x,y,z) -> conj_plus [fives x; fives y; fives z] in
+let three_turtles = 
+  (* obtain the conjunction of turtles applied with three variables *)
+  let thrice = fun (x,y,z) -> conj_plus [turtles x; turtles y; turtles z] in
   (* form the goal by introducing 3 new logic variables *)
   let g = fresh3 thrice in
   (* obtain the result stream by calling the goal in the empty state *)
   let s = call_empty_state g in
   (* obtain 3 states from the stream *)
-  let s3 = take 3 s in
+  let s3 = take 3 s in 
   (* pretty print the stream *)
-  printf "%s" (stream_print s3)
+  printf "three_turtles\n%s" (stream_print s3)
 ```
 
 This gives the following result where each line corresponds to a state which maps variables, represented by naturals, to their values:
 
 ```
 States:
-{ substitution: [(0, 5),  (1, 5),  (2, 5),  ], counter: 3 }
-{ substitution: [(0, 5),  (1, 5),  (2, 5),  ], counter: 3 }
-{ substitution: [(0, 5),  (1, 5),  (2, 5),  ], counter: 3 }
+{ substitution: [(0, turtle),  (1, turtle),  (2, turtle),  ], counter: 3 }
+{ substitution: [(0, turtle),  (1, turtle),  (2, turtle),  ], counter: 3 }
+{ substitution: [(0, turtle),  (1, turtle),  (2, turtle),  ], counter: 3 }
 ```
 
 ### If-then-else (soft-cut)

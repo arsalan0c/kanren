@@ -6,7 +6,7 @@
 
 The examples can be run with 
 
-```
+```sh
 dune exec examples/main.exe
 ```
 
@@ -37,7 +37,7 @@ let three_turtles =
 
 This gives the following result where each line corresponds to a state which maps variables, represented by naturals, to their values:
 
-```
+```md
 States:
 { substitution: [(0, turtle),  (1, turtle),  (2, turtle),  ], counter: 3 }
 { substitution: [(0, turtle),  (1, turtle),  (2, turtle),  ], counter: 3 }
@@ -62,7 +62,7 @@ let fivesix_or_seven =
 
 Since the first goal succeeds, the result is a single state with two variables having the values 5 and 6:
 
-```
+```md
 States:
 { substitution: [(0, 5),  (1, 6),  ], counter: 2 }
 ```

@@ -79,7 +79,7 @@ let rec mplus s1 s2 = match s1, s2 with
     | Nil, _ -> s2
     | Immature f1, Immature f2 -> Immature(fun () -> mplus (f1()) (f2()))
     | Immature f, _ -> Immature(fun () -> mplus s2 (f())) 
-    | Cons(a, r), _ -> Cons(a, mplus s2 r)
+    | Cons(a, r), _ -> Cons(a, mplus r s2)
 
 let disj g1 g2 =
     fun sc -> mplus (g1 sc) (g2 sc)

@@ -1,6 +1,10 @@
 # µKanren in OCaml
- 
-[µKanren](http://webyrd.net/scheme-2013/papers/HemannMuKanren2013.pdf) is an embedded DSL for logic programming. It is part of family of such languages known as [*kanrens*](http://minikanren.org), with a focus on being minimalist and easy to understand. While this is at the expense of expressiveness and ease of use, the core system can be augmented. This implementation includes several such suggestions from the paper, including complete search through fair interleaving (not to be confused with breadth-first search (it interleaves only the minimum necessary to achieve complete search)) and the `take` operator for example. It also includes other functionality such as `once` for commited choice and `ifte` which functions as a [soft-cut](https://www.swi-prolog.org/pldoc/doc_for?object=(*-%3E)/2).
+  
+[µKanren](http://webyrd.net/scheme-2013/papers/HemannMuKanren2013.pdf) is an embedded DSL for logic programming. It is part of family of such languages known as [*kanrens*](http://minikanren.org), with a focus on being minimalist and easy to understand. While this is at the expense of expressiveness and ease of use, the core system can be augmented. This implementation includes several such suggestions from the paper, including complete search and the `occurs` check to eliminate circularities in the substitution. It also includes other functionality such as `once` for commited choice and `ifte` as a [soft-cut](https://www.swi-prolog.org/pldoc/doc_for?object=(*-%3E)/2).
+
+A note on the complete search mechanism:
+
+Depth-first interleaving search is used. Control is handed off to another stream only in so far as it is necessary to achieve complete search. This is in contrast with breadth-first search which would perform the interleaving with every step.
 
 ## Examples
 

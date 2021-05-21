@@ -3,30 +3,21 @@
 open Base
 
 exception Failure of string
-
 let[@inline] failwith msg = raise (Failure ("Failure: " ^ msg))
 
 type var = int
-
 type var_counter = int
-
 type 'a stream =
   | Nil
   | Immature of (unit -> 'a stream)
   | Cons of 'a * 'a stream
-
 type atom = Int of int | Float of float | Bool of bool | Str of string
-
 type term = Atom of atom | Var of var | Pair of var * term
-
 type substitution = (int, term, Int.comparator_witness) Map.t
-
 type state = substitution * var_counter
-
 type goal = state -> state stream
 
 let mZero = Nil
-
 let empty_state = (Map.empty (module Int), 0)
 
 let eqv (u : atom) (v : atom) =

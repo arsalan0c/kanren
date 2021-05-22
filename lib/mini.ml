@@ -71,5 +71,6 @@ let freshN n (f : term list -> goal) sc =
   let vars = List.map (List.range counter (counter + n)) ~f:(fun i -> Var i) in
   f vars (fst sc, counter + n)
 
-let rec repeat g = 
-  disj g (fun sc -> Immature (fun () -> repeat g sc))
+(* constructs an infinitely recursing goal *)
+let rec infinite g = 
+  disj g (fun sc -> Immature (fun () -> infinite g sc))

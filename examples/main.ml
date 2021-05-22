@@ -4,7 +4,7 @@ open Mk.Print
 
 let printf = Stdlib.Printf.printf
 
-(* A recursive goal to provide an infinite number of turtle's *)
+(* A recursive goal to provide an infinite number of turtles *)
 (* To prevent a stack overflow, invocation of the recursive goal is delayed by using an immature stream *)
 let rec turtles x =
   disj (x === Atom (Str "turtle")) (fun sc -> Immature (fun () -> turtles x sc))

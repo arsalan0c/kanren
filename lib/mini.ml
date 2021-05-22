@@ -7,8 +7,8 @@ let call_empty_state g = g empty_state
 
 let disj_plus gs =
   match List.reduce gs ~f:disj with
-  | Some g -> fun sc -> g sc
-  | None -> fun _ -> mZero
+  | Some g -> g
+  | None -> fail
 
 let conj_plus gs =
   match List.reduce gs ~f:conj with

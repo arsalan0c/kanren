@@ -12,7 +12,7 @@ type 'a stream =
   | Immature of (unit -> 'a stream)
   | Cons of 'a * 'a stream
 type atom = Int of int | Float of float | Bool of bool | Str of string
-type term = Atom of atom | Var of var | Pair of var * term
+type term = Atom of atom | Var of var | Pair of term * term
 type substitution = (int, term, Int.comparator_witness) Map.t
 type state = substitution * var_counter
 type goal = state -> state stream
@@ -40,7 +40,7 @@ let rec walk t s =
 let rec occurs v t s =
   match walk t s with
   | Var x -> x = v
-  | Pair (e1, e2) -> occurs v (Var e1) s || occurs v e2 s
+  | Pair (e1, e2) -> occurs v e1 s || occurs v e2 s
   | _ -> false
 
 let ext_s v t s =
@@ -54,7 +54,7 @@ let rec unify u v s =
   | Var e, z -> Some (ext_s e z s)
   | z, Var e -> Some (ext_s e z s)
   | Pair (x1, y1), Pair (x2, y2) -> (
-      match unify (Var x1) (Var x2) s with
+      match unify x1 x2 s with
       | Some s2 -> unify y1 y2 s2
       | None -> None )
   | Atom e1, Atom e2 when eqv e1 e2 -> Some s

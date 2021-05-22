@@ -11,7 +11,7 @@ let atom_print = function
 
 let rec term_print = function
   | Var x -> Int.to_string x
-  | Pair (x, y) -> "(" ^ Int.to_string x ^ ", " ^ term_print y ^ ")"
+  | Pair (x, y) -> "(" ^ term_print x ^ ", " ^ term_print y ^ ")"
   | Atom x -> atom_print x
 
 let subst_print subst =

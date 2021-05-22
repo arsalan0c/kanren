@@ -19,6 +19,7 @@ type goal = state -> state stream
 
 let mZero = Nil
 let empty_state = (Map.empty (module Int), 0)
+let fail = fun (_ :state)  -> Nil
 
 let eqv (u : atom) (v : atom) =
   let atom_compare u v =

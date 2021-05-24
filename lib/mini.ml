@@ -12,8 +12,8 @@ let disj_plus gs =
 
 let conj_plus gs =
   match List.reduce gs ~f:conj with
-  | Some g -> fun sc -> g sc
-  | None -> fun _ -> mZero
+  | Some g -> g
+  | None -> fail
 
 (* force evaluation of a stream *)
 let rec pull s = match s with Immature f -> pull (f ()) | _ -> s
@@ -32,6 +32,17 @@ let call_initial_state n g = take n (pull (call_empty_state g))
 (* trivial reifier *)
 let rec length s = match pull s with Cons (_, r) -> 1 + length r | _ -> 0
 
+let rec stream_to_lst s = match pull s with Cons (a, r) -> a::(stream_to_lst r) | _ -> []
+
+let subst_to_vals subst = 
+  let f ~key:_ ~data:v acc = v::acc
+  in Map.fold subst ~init:[] ~f
+
+(* retrieves results from all states - similar to Prolog's findall *)
+let all_values s = 
+  let l = stream_to_lst s in
+  List.fold l ~init:[] ~f:(fun acc (subst, _) -> (subst_to_vals subst)@acc)
+
 (* committed choice *)
 let once g sc =
   let rec loop s =
@@ -48,7 +59,7 @@ let ifte g1 g2 g3 sc =
     match s with
     | Nil -> g3 sc
     | Immature f -> Immature (fun () -> loop (f ()) g2 g3)
-    | Cons (a, aa) -> bind (Cons (a, aa)) g2
+    | Cons (a, r) -> bind (Cons (a, r)) g2
   in
   loop (g1 sc) g2 g3
 
@@ -74,3 +85,4 @@ let freshN n (f : term list -> goal) sc =
 (* constructs an infinitely recursing goal *)
 let rec infinite g = 
   disj g (fun sc -> Immature (fun () -> infinite g sc))
+  

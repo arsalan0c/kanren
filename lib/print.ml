@@ -3,11 +3,12 @@
 open Base
 open Micro
 
-let atom_print = function
+let rec atom_print = function
   | Int x -> Int.to_string x
   | Float x -> Float.to_string x
   | Bool x -> Bool.to_string x
   | Str x -> x
+  | Lst x -> "[" ^ (String.concat ~sep:", " (List.map x ~f:atom_print)) ^ "]"
 
 let rec term_print = function
   | Var x -> Int.to_string x

@@ -2,8 +2,8 @@
 
 open Base
 
-exception Failure of string
-let[@inline] failwith msg = raise (Failure ("Failure: " ^ msg))
+exception KanrenFailure of string
+let[@inline] failwith msg = raise (KanrenFailure ("KanrenFailure: " ^ msg))
 
 type var = int
 type var_counter = int
@@ -11,7 +11,7 @@ type 'a stream =
   | Nil
   | Immature of (unit -> 'a stream)
   | Cons of 'a * 'a stream
-type atom = Int of int | Float of float | Bool of bool | Str of string
+type atom = Int of int | Float of float | Bool of bool | Str of string | Lst of atom list
 type term = Atom of atom | Var of var | Pair of term * term
 type substitution = (int, term, Int.comparator_witness) Map.t
 type state = substitution * var_counter
@@ -19,15 +19,27 @@ type goal = state -> state stream
 
 let mZero = Nil
 let empty_state = (Map.empty (module Int), 0)
-let fail = fun (_ :state) -> Nil
+let fail = fun (_ :state) -> mZero
+
+let concat t1 t2 = match t1, t2 with
+  | (Atom (Lst x)), (Atom (Lst y)) -> Atom (Lst (x@y))
+  | (Atom (Lst x)), Atom a -> Atom (Lst (x@[a]))
+  | Atom a, (Atom (Lst y)) -> Atom (Lst (a::y))
+  | (Atom (Str x)), (Atom (Str y)) -> Atom (Str (x^y))
+  | _ -> failwith "unable to concatenate terms"
 
 let eqv (u : atom) (v : atom) =
-  let atom_compare u v =
-    match (u, v) with
+  let rec atom_compare u v =
+    match u, v with
     | Int x, Int y -> Int.compare x y
     | Float x, Float y -> Float.compare x y
     | Bool x, Bool y -> Bool.compare x y
     | Str x, Str y -> String.compare x y
+    | Lst x, Lst y -> begin
+      match List.fold2 x y ~init:0 ~f:(fun acc a b -> acc + (atom_compare a b)) with
+      | Ok 0 -> 0
+      | _ -> -1
+    end
     | _, _ -> -1
   in
   atom_compare u v = 0

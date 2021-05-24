@@ -3,7 +3,7 @@
 open Base
 
 exception KanrenFailure of string
-let[@inline] failwith msg = raise (KanrenFailure ("KanrenFailure: " ^ msg))
+let[@inline] failwith msg = raise (KanrenFailure msg)
 
 type var = int
 type var_counter = int

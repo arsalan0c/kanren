@@ -39,13 +39,12 @@ let three_turtles =
   printf "three_turtles\n%s" (stream_print s3)
 ```
 
-This gives the following result where each line corresponds to a state which maps variables, represented by naturals, to their values:
+This gives the following result where each line corresponds to a state containing the result values:
 
 ```md
-States:
-{ substitution: [(0, turtle),  (1, turtle),  (2, turtle),  ], counter: 3 }
-{ substitution: [(0, turtle),  (1, turtle),  (2, turtle),  ], counter: 3 }
-{ substitution: [(0, turtle),  (1, turtle),  (2, turtle),  ], counter: 3 }
+[turtle, turtle, turtle, ]
+[turtle, turtle, turtle, ]
+[turtle, turtle, turtle, ]
 ```
 
 ### If-then-else (soft-cut)
@@ -67,8 +66,7 @@ let fivesix_or_seven =
 Since the first goal succeeds, the result is a single state with two variables having the values 5 and 6:
 
 ```md
-States:
-{ substitution: [(0, 5),  (1, 6),  ], counter: 2 }
+[5, 6, ]
 ```
 
 This can be useful in committing to a heuristic but only after testing to see whether it applies.

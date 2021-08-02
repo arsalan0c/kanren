@@ -6,14 +6,10 @@ open Micro
 let call_empty_state g = g empty_state
 
 let disj_plus gs =
-  match List.reduce gs ~f:disj with
-  | Some g -> g
-  | None -> fail
+  match List.reduce gs ~f:disj with Some g -> g | None -> fail
 
 let conj_plus gs =
-  match List.reduce gs ~f:conj with
-  | Some g -> g
-  | None -> fail
+  match List.reduce gs ~f:conj with Some g -> g | None -> fail
 
 (* force evaluation of a stream *)
 let rec pull s = match s with Immature f -> pull (f ()) | _ -> s
@@ -32,16 +28,17 @@ let call_initial_state n g = take n (pull (call_empty_state g))
 (* trivial reifier *)
 let rec length s = match pull s with Cons (_, r) -> 1 + length r | _ -> 0
 
-let rec stream_to_lst s = match pull s with Cons (a, r) -> a::(stream_to_lst r) | _ -> []
+let rec stream_to_lst s =
+  match pull s with Cons (a, r) -> a :: stream_to_lst r | _ -> []
 
-let subst_to_vals subst = 
-  let f ~key:_ ~data:v acc = v::acc
-  in Map.fold subst ~init:[] ~f
+let subst_to_vals subst =
+  let f ~key:_ ~data:v acc = v :: acc in
+  Map.fold subst ~init:[] ~f
 
 (* retrieves results from all states - similar to Prolog's findall *)
-let all_values s = 
+let all_values s =
   let l = stream_to_lst s in
-  List.fold l ~init:[] ~f:(fun acc (subst, _) -> (subst_to_vals subst)@acc)
+  List.fold l ~init:[] ~f:(fun acc (subst, _) -> subst_to_vals subst @ acc)
 
 (* committed choice *)
 let once g sc =
@@ -83,6 +80,4 @@ let freshN n (f : term list -> goal) sc =
   f vars (fst sc, counter + n)
 
 (* constructs an infinitely recursing goal *)
-let rec infinite g = 
-  disj g (fun sc -> Immature (fun () -> infinite g sc))
-  
+let rec infinite g = disj g (fun sc -> Immature (fun () -> infinite g sc))

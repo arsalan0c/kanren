@@ -8,7 +8,7 @@ let rec atom_print = function
   | Float x -> Float.to_string x
   | Bool x -> Bool.to_string x
   | Str x -> x
-  | Lst x -> "[" ^ (String.concat ~sep:", " (List.map x ~f:atom_print)) ^ "]"
+  | Lst x -> "[" ^ String.concat ~sep:", " (List.map x ~f:atom_print) ^ "]"
 
 let rec term_print = function
   | Var x -> Int.to_string x
@@ -16,8 +16,8 @@ let rec term_print = function
   | Atom x -> atom_print x
 
 let subst_print subst =
-  let f ~key:_ ~data:v acc = acc ^ (term_print v) ^ ", "
-  in Map.fold subst ~init:"[" ~f ^ "]"
+  let f ~key:_ ~data:v acc = acc ^ term_print v ^ ", " in
+  Map.fold subst ~init:"[" ~f ^ "]"
 
 let state_print (subst, _) = subst_print subst
 

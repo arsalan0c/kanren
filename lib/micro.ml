@@ -3,50 +3,67 @@
 open Base
 
 exception KanrenFailure of string
+
 let[@inline] failwith msg = raise (KanrenFailure msg)
 
 type var = int
+
 type var_counter = int
+
 type 'a stream =
   | Nil
   | Immature of (unit -> 'a stream)
   | Cons of 'a * 'a stream
-type atom = Int of int | Float of float | Bool of bool | Str of string | Lst of atom list
+
+type atom =
+  | Int of int
+  | Float of float
+  | Bool of bool
+  | Str of string
+  | Lst of atom list
+
 type term = Atom of atom | Var of var | Pair of term * term
+
 type substitution = (int, term, Int.comparator_witness) Map.t
+
 type state = substitution * var_counter
+
 type goal = state -> state stream
 
 let mZero = Nil
-let empty_state = (Map.empty (module Int), 0)
-let fail = fun (_ :state) -> mZero
 
-let concat t1 t2 = match t1, t2 with
-  | (Atom (Lst x)), (Atom (Lst y)) -> Atom (Lst (x@y))
-  | (Atom (Lst x)), Atom a -> Atom (Lst (x@[a]))
-  | Atom a, (Atom (Lst y)) -> Atom (Lst (a::y))
-  | (Atom (Str x)), (Atom (Str y)) -> Atom (Str (x^y))
+let empty_state = (Map.empty (module Int), 0)
+
+let fail (_ : state) = mZero
+
+let concat t1 t2 =
+  match (t1, t2) with
+  | Atom (Lst x), Atom (Lst y) -> Atom (Lst (x @ y))
+  | Atom (Lst x), Atom a -> Atom (Lst (x @ [ a ]))
+  | Atom a, Atom (Lst y) -> Atom (Lst (a :: y))
+  | Atom (Str x), Atom (Str y) -> Atom (Str (x ^ y))
   | _ -> failwith "unable to concatenate terms"
 
 let eqv (u : atom) (v : atom) =
   let rec atom_compare u v =
-    match u, v with
+    match (u, v) with
     | Int x, Int y -> Int.compare x y
     | Float x, Float y -> Float.compare x y
     | Bool x, Bool y -> Bool.compare x y
     | Str x, Str y -> String.compare x y
-    | Lst x, Lst y -> begin
-      match List.fold2 x y ~init:0 ~f:(fun acc a b -> acc + (atom_compare a b)) with
-      | Ok 0 -> 0
-      | _ -> -1
-    end
+    | Lst x, Lst y -> (
+        match
+          List.fold2 x y ~init:0 ~f:(fun acc a b -> acc + atom_compare a b)
+        with
+        | Ok 0 -> 0
+        | _ -> -1)
     | _, _ -> -1
   in
   atom_compare u v = 0
 
 let rec walk t s =
   match t with
-  | Var v -> ( match Map.find s v with Some x -> walk x s | None -> t )
+  | Var v -> ( match Map.find s v with Some x -> walk x s | None -> t)
   | _ -> t
 
 let rec occurs v t s =
@@ -66,9 +83,7 @@ let rec unify u v s =
   | Var e, z -> Some (ext_s e z s)
   | z, Var e -> Some (ext_s e z s)
   | Pair (x1, y1), Pair (x2, y2) -> (
-      match unify x1 x2 s with
-      | Some s2 -> unify y1 y2 s2
-      | None -> None )
+      match unify x1 x2 s with Some s2 -> unify y1 y2 s2 | None -> None)
   | Atom e1, Atom e2 when eqv e1 e2 -> Some s
   | _, _ -> None
 

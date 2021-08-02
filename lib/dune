@@ -1,1 +1,3 @@
-library (name mk) (libraries base)
+(library
+ (name mk)
+ (libraries base))

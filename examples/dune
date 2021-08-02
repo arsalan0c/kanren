@@ -1,2 +1,1 @@
-(executable (name main)
-    (libraries mk base))
+executable (name main) (libraries mk base)
